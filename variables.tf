@@ -1,5 +1,10 @@
-variable "snowflake_account" {}
-variable "snowflake_user" {}
-variable "snowflake_password" {
-  sensitive = true
+variable "snowflake_organisation" {
+    type = string
 }
+variable "snowflake_account" {
+    type = string
+}
+variable "snowflake_user" {
+    type = string
+}
+

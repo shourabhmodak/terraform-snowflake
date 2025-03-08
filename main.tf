@@ -8,9 +8,13 @@ terraform {
 }
 
 provider "snowflake" {
-  account  = var.snowflake_account
-  username = var.snowflake_user
-  password = var.snowflake_password
+  organization_name      = var.snowflake_organisation    
+  account_name           = var.snowflake_account
+  user                   = var.snowflake_user
+  private_key            = file("~/.ssh/svc_tf_key.p8")
+  #private_key_passphrase = var.private_key_passphrase
+
+  role = "SYSADMIN"
 }
 
 resource "snowflake_database" "example" {
