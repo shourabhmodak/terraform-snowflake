@@ -56,7 +56,7 @@ MIIBIj...
 ```
 
 
-Log into Snowflake and execute:
+Log into Snowflake and execute the following to create the Snowflake Service Account User:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -66,7 +66,8 @@ rsa_public_key = "YOUR_PUBLIC_KEY_CONTENT"
 default_role = PUBLIC
 must_change_password = FALSE;
 
-ALTER USER SVC_TERRAFORM SET RSA_PUBLIC_KEY='YOUR_PUBLIC_KEY_CONTENT';
+GRANT ROLE SYSADMIN TO USER SVC_TERRAFORM;
+GRANT ROLE SECURITYADMIN TO USER SVC_TERRAFORM;
 ```
 
 ### 4. Configure Terraform Variables
