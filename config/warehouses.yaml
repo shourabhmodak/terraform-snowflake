@@ -1,0 +1,10 @@
+warehouses: 
+  - name: ANALYTICS_WH
+    size: XSMALL
+    auto_suspend: 120
+    comment: "Warehouse for analytics team"
+  
+  - name: ETL_WH
+    size: XSMALL
+    statement_timeout_in_seconds: 360
+    comment: "ETL processing warehouse"

@@ -14,7 +14,7 @@ provider "snowflake" {
   user                   = var.snowflake_user
   authenticator          = "SNOWFLAKE_JWT"
   private_key            = file("~/.ssh/svc_tf_key.p8")
-  role = "ACCOUNTADMIN"
+  role = "accountadmin"
 }
 
 provider "snowflake" {
@@ -24,7 +24,7 @@ provider "snowflake" {
   user                   = var.snowflake_user
   authenticator          = "SNOWFLAKE_JWT"
   private_key            = file("~/.ssh/svc_tf_key.p8")
-  role = "SECURITYADMIN"
+  role = "securityadmin"
 }
 
 provider "snowflake" {
@@ -34,10 +34,37 @@ provider "snowflake" {
   user                   = var.snowflake_user
   authenticator          = "SNOWFLAKE_JWT"
   private_key            = file("~/.ssh/svc_tf_key.p8")
-  role = "SYSADMIN"
+  role = "sysadmin"
 }
 
-resource "snowflake_database" "example" {
-  provider = snowflake.sysadmin
-  name = "DEMO_DB"
+# provider "snowflake" {
+#   organization_name      = var.snowflake_organisation    
+#   account_name           = var.snowflake_account
+#   user                   = var.snowflake_user
+#   authenticator          = "SNOWFLAKE_JWT"
+#   private_key            = file("~/.ssh/svc_tf_key.p8")
+#   role = "sysadmin"
+# }
+
+# Read the YAML config file
+locals {
+  warehouse_config = yamldecode(file("./config/warehouses.yaml"))
+}
+
+# Loop through each warehouse and pass properties (use defaults when missing)
+module "warehouses" {
+  for_each = { for wh in local.warehouse_config.warehouses : wh.name => wh }
+
+  source = "./modules/warehouse"
+
+  name         = each.value.name
+  size         = try(each.value.size, null) # Use null to trigger module defaults
+  auto_suspend = try(each.value.auto_suspend, null)
+  auto_resume  = lookup(each.value, "auto_resume", null)
+  statement_timeout_in_seconds  = lookup(each.value, "statement_timeout_in_seconds", null)
+  comment      = lookup(each.value, "comment", null)
+
+  providers = {
+    snowflake.sysadmin = snowflake.sysadmin
+  }
 }
